@@ -26,22 +26,27 @@ router.get('/details/:id', async (req, res, next) => {
   }
 });
 
-// ADD CELEBRITY
+// ADD CELEBRITY AND EDIT(POST)
 router.get('/new', (req, res, next) => {
   res.render('../views/celebrities/new');
 });
 
 router.post('/', async (req, res, next) => {
-  const { name, occupation, catchPhrase } = req.body;
+  const { _id, name, occupation, catchPhrase } = req.body;
   const celebrity = { name, occupation, catchPhrase };
   try {
-    await Celebrity.create(celebrity);
+    if (_id) {
+      await Celebrity.findByIdAndUpdate(_id, celebrity);
+    } else {
+      await Celebrity.create(celebrity);
+    }
     res.redirect('/celebrities');
   } catch (error) {
     res.render('../views/celebrities/new');
   }
 });
 
+// DELETE CELEBRITY
 router.get('/:id/delete', async (req, res, next) => {
   const { id } = req.params;
   try {
@@ -52,6 +57,16 @@ router.get('/:id/delete', async (req, res, next) => {
   }
 });
 
-// DELETE CELEBRITY
+// EDIT CELEBRITY
+
+router.get('/:id/edit', async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const celebrity = await Celebrity.findById(id);
+    res.render('../views/celebrities/edit', celebrity);
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;
