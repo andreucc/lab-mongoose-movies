@@ -26,4 +26,20 @@ router.get('/details/:id', async (req, res, next) => {
   }
 });
 
+// ADD CELEBRITY
+router.get('/new', (req, res, next) => {
+  res.render('../views/celebrities/new');
+});
+
+router.post('/', async (req, res, next) => {
+  const { name, occupation, catchPhrase } = req.body;
+  const celebrity = { name, occupation, catchPhrase };
+  try {
+    await Celebrity.create(celebrity);
+    res.redirect('/celebrities');
+  } catch (error) {
+    res.render('../views/celebrities/new');
+  }
+});
+
 module.exports = router;
